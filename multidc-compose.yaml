@@ -1,0 +1,66 @@
+version: '2'
+services:
+  seed_node:
+    image: "store/datastax/dse-server:5.1.5"
+    environment:
+      - DS_LICENSE=accept
+      - DC=DC1
+    # Allow DSE to lock memory with mlock
+    cap_add:
+    - IPC_LOCK
+    ulimits:
+      memlock: -1
+
+  node:
+    image: "store/datastax/dse-server:5.1.5"
+    environment:
+      - DS_LICENSE=accept
+      - SEEDS=seed_node,dc2_seed_node
+      - DC=DC1
+    links:
+      - seed_node
+      - dc2_seed_node
+    # Allow DSE to lock memory with mlock
+    cap_add:
+    - IPC_LOCK
+    ulimits:
+      memlock: -1
+ 
+  dc2_seed_node:
+    image: "store/datastax/dse-server:5.1.5"
+    environment:
+      - DS_LICENSE=accept
+      - SEEDS=seed_node,dc2_seed_node
+      - DC=DC2
+    # Allow DSE to lock memory with mlock
+    cap_add:
+    - IPC_LOCK
+    ulimits:
+      memlock: -1
+ 
+  dc2node:
+    image: "store/datastax/dse-server:5.1.5"
+    depends_on:
+      - seed_node
+      - node  
+      - dc2_seed_node
+    environment:
+      - DS_LICENSE=accept
+      - SEEDS=seed_node,dc2_seed_node
+      - DC=DC2
+    links:
+      - seed_node
+      - node
+    # Allow DSE to lock memory with mlock
+    cap_add:
+    - IPC_LOCK
+    ulimits:
+      memlock: -1
+
+
+
+
+
+
+
+
