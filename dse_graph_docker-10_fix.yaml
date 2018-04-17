@@ -11,7 +11,7 @@ services:
     image: "datastax/dse-server"
     environment:
       - DS_LICENSE=accept
-    command:
+    command: 
      -k
      -s
      -g
@@ -21,20 +21,13 @@ services:
     - IPC_LOCK
     ulimits:
       memlock: -1
-    ports:
-    - "4040:4040"
-    - "7080:7080"
-    - "7199:7199"
-    - "8182:8182"
-    - "8983:8983"
-    - "9042:9042"
     volumes:
     - ./data:/var/lib/cassandra/data
     - ./conf:/config
     - ./logs:/var/lib/cassandra/commit_logs
     - ./cache:/var/lib/cassandra/saved_caches
-
-
+    container_name: "dse"
+ 
   studio:
     networks:
       - bridge
@@ -46,3 +39,4 @@ services:
     - ./conf/studio:/config
     ports:
     - "9091:9091"
+    container_name: "studio"
