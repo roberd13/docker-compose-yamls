@@ -1,0 +1,48 @@
+version: '2'
+networks:
+  bridge:
+    external: false
+services:
+  node:
+    networks:
+      bridge:
+        aliases:
+          - graph
+    image: "datastax/dse-server"
+    environment:
+      - DS_LICENSE=accept
+    command:
+     -k
+     -s
+     -g
+
+    # Allow DSE to lock memory with mlock
+    cap_add:
+    - IPC_LOCK
+    ulimits:
+      memlock: -1
+    ports:
+    - "4040:4040"
+    - "7080:7080"
+    - "7199:7199"
+    - "8182:8182"
+    - "8983:8983"
+    - "9042:9042"
+    volumes:
+    - ./data:/var/lib/cassandra/data
+    - ./conf:/config
+    - ./logs:/var/lib/cassandra/commit_logs
+    - ./cache:/var/lib/cassandra/saved_caches
+
+
+  studio:
+    networks:
+      - bridge
+    image: "datastax/dse-studio"
+    environment:
+      - DS_LICENSE=accept
+    volumes:
+    - ./studio:/var/lib/datastax-studio
+    - ./conf/studio:/config
+    ports:
+    - "9091:9091"
